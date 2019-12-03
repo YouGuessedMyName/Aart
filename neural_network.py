@@ -4,6 +4,7 @@ import os
 import numpy
 import pickle
 
+
 def read_trainingset(name):
     """
     Function which reads a dumped trainingset in from a pickle file.
@@ -23,7 +24,6 @@ def read_trainingset(name):
             datalist = content[0]
             numlist = content[1]
             return (datalist, numlist)
-            # datalist = [[[3, 6, ...], ...], ...]           numlist = [0, 4, 6, 9, ...]
     except:
         return "INVALID_FORMAT"
 
