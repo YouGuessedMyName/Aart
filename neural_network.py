@@ -2,7 +2,7 @@
 # even om lag te voorkomen
 import os
 import numpy
-
+import pickle
 
 def read_trainingset(name):
     """
