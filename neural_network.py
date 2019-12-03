@@ -9,7 +9,7 @@ def read_trainingset(name):
     """
     Function which reads a dumped trainingset in from a pickle file.
 
-    :return: tuple OR str
+    :return tuple OR str
     """
     folderpath = os.path.normpath(os.getcwd() + "/trainingsets")
     if os.path.isdir(folderpath) == False:
@@ -21,8 +21,7 @@ def read_trainingset(name):
     try:
         with open(path, "rb") as file:
             content = pickle.load(file)
-            datalist = content[0]
-            numlist = content[1]
+            datalist, numlist = content
             return (datalist, numlist)
     except:
         return "INVALID_FORMAT"
@@ -31,10 +30,11 @@ def get_trainingset():
     """
     function with a UI interface that returns the trainingset.
 
-    :return: list, list
+    :return list, list, filename
     """
     run = True
     print("Please input file name.")
+    filename = ""
     while run:
         filename = input()
         data = read_trainingset(filename)
@@ -48,11 +48,26 @@ def get_trainingset():
             print("Please try again.")
         else:
             run = False
-    return data[0], data[1]
+    return data[0], data[1], filename
+
+def show_traningset(input_list, result_list, filename):
+    """
+    Function to clearly display trainingset data.
+
+    :param input_list: list
+    :param result_list: list
+    :param filename: str
+    """
+
+    print("SHOWING TRAININGSET: ", filename)
+    for n in range(0, len(result_list)):
+        print("\nIMAGE", n)
+        print("    Grade:", result_list[n])
+        print("    Function data:\n    ", input_list[n])
 
 def main():
-    input_list, result_list = get_trainingset()
-    print(input_list, result_list)
+    input_list, result_list, filename = get_trainingset()
+    show_traningset(input_list, result_list, filename)
 
 if __name__ == "__main__":
     main()
