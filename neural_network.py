@@ -9,7 +9,7 @@ def read_trainingset(name):
     """
     Function which reads a dumped trainingset in from a pickle file.
 
-    :return tuple OR str
+    :returns tuple OR str
     """
     folderpath = os.path.normpath(os.getcwd() + "/trainingsets")
     if os.path.isdir(folderpath) == False:
@@ -20,9 +20,8 @@ def read_trainingset(name):
         return "NO_FILE"
     try:
         with open(path, "rb") as file:
-            content = pickle.load(file)
-            datalist, numlist = content
-            return (datalist, numlist)
+            datalist,numlist = pickle.load(file)
+            return datalist, numlist
     except:
         return "INVALID_FORMAT"
 
@@ -30,24 +29,23 @@ def get_trainingset():
     """
     function with a UI interface that returns the trainingset.
 
-    :return list, list, filename
+    :returns list, list, filename
     """
-    run = True
     print("Please input file name.")
     filename = ""
-    while run:
+    while True:
         filename = input()
         data = read_trainingset(filename)
-        if data == "NO_FOLDER":
-            print("ERROR, trainingset folder not found.")
-        if data == "NO_FILE":
-            print("ERROR, file name not found.")
-        if data == "INVALID_FORMAT":
-            print("ERROR, file has invalid format.")
-        if data == "NO_FOLDER" or data == "NO_FILE" or data == "INVALID_FORMAT":
+        if type(data) == str:
+            if data == "NO_FOLDER":
+                print("ERROR, trainingset folder not found.")
+            elif data == "NO_FILE":
+                print("ERROR, file name not found.")
+            elif data == "INVALID_FORMAT":
+                print("ERROR, file has invalid format.")
             print("Please try again.")
         else:
-            run = False
+            break
     return data[0], data[1], filename
 
 def show_traningset(input_list, result_list, filename):
@@ -61,7 +59,7 @@ def show_traningset(input_list, result_list, filename):
 
     print("SHOWING TRAININGSET: ", filename)
     for n in range(0, len(result_list)):
-        print("\nIMAGE", n)
+        print("\nIMAGE", n+1)
         print("    Grade:", result_list[n])
         print("    Function data:\n    ", input_list[n])
 
