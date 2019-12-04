@@ -4,6 +4,6 @@ TINKERLAB
 Authors: Ivo Melse, Alex Feenstra
 
 Acknowledgements:
-Judith van Es, André van Duin
+Judith van Es, Michiel van Duin
 
 
