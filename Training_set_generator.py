@@ -137,9 +137,7 @@ class DataSetObj:
             return "NO_FILE"
         try:
             with open(path, "rb") as file:
-                content = pickle.load(file)
-                self.datalist = content[0]
-                self.numlist = content[1]
+                self.datalist,self.numlist = pickle.load(file)
         except:
             return "INVALID_FORMAT"
 
@@ -185,7 +183,7 @@ def read_dataset(dataset):
             input("The filename you entered does not exist.\nPress enter to return to the menu.\n")
         elif check == "INVALID_FORMAT":
             input("The file you attempted to read does not have a valid format.\nPress enter to retrun to the menu.\n")
-        elif check == None:
+        else:
             input("The training set has been read succesfuly.\nPress enter to return to the menu.\n")
     return dataset
 
