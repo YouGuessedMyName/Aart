@@ -1,3 +1,4 @@
+#! /usr/bin/python3
 # from tensorflow import keras
 # even om lag te voorkomen
 import os
@@ -62,6 +63,7 @@ def show_traningset(input_list, result_list, filename):
         print("\nIMAGE", n+1)
         print("    Grade:", result_list[n])
         print("    Function data:\n    ", input_list[n])
+        
 
 def main():
     input_list, result_list, filename = get_trainingset()
