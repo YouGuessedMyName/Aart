@@ -54,19 +54,20 @@ def process_trainingset(input_list):
     """
     Function to process one input_list to alter all values to a range (0 - 1).
     """
-    for idx,x in enumerate(input_list):
+    for set_idx,single_set in enumerate(input_list):
         for y in range(0,7):
-            a = x[y]
-            a[0] = a[0]/9
-            a[1] = a[1]/9
-            a[2] = (a[2]+10)/20
-            a[3] = (a[3]+10)/20
-            a[4] = a[4]/pi
-            a[5] = a[5]/pi
-            a[6] = (a[6]+pi)/2*pi
-            a[7] = (a[7]+pi)/2*pi
-            x[y] = a
-        input_list[idx] = x
+            varlist = single_set[y]
+            for idx,var in enumerate(varlist):
+                if y == 0 or y == 1:
+                    varlist[idx] = var/9
+                elif y == 2 or y == 3:
+                    varlist[idx] = (var+10)/20
+                elif y == 4 or y == 5:
+                    varlist[idx] = var/pi
+                elif y == 6 or y == 7:
+                    varlist[idx] = (var+pi)/2*pi
+            single_set[y] = varlist
+        input_list[set_idx] = single_set
     return input_list
 
 def show_traningset(input_list, result_list, filename):
