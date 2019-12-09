@@ -18,10 +18,12 @@ Possible processing:
 
 randvar1: x/9
 
-randvar2: abs(x/10)
+randvar2: (x+10)/20
 
 randvar3: x/2pi
 
-randvar4: abs(x/pi)
+randvar4: (x+pi)/2pi
+
+
 
 
