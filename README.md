@@ -26,24 +26,5 @@ randvar4: (x+pi)/2pi
 
 
 
-Possible processing function:
-
-def process_trainingset(input_list):
-  for idx,x in enumerate(input_list):
-    for y in range(0,7):
-      a = x[y]
-      a[0] = a[0]/9
-      a[1] = a[1]/9
-      a[2] = (a[2]+10)/20
-      a[3] = (a[3]+10)/20
-      a[4] = a[4]/pi
-      a[5] = a[5]/pi
-      a[6] = (a[6]+pi)/2pi
-      a[7] = (a[7]+pi)/2pi
-      x[y] = a
-    input_list[idx] = x
-  return input_list
-
-
 
 
