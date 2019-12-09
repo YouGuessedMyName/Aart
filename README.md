@@ -17,8 +17,11 @@ Ranges of randvar 1-4:
 Possible processing:
 
 randvar1: x/9
+
 randvar2: abs(x/10)
+
 randvar3: x/2pi
+
 randvar4: abs(x/pi)
 
 
