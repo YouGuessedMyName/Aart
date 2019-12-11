@@ -9,8 +9,6 @@ from matplotlib.pyplot import xlim, ylim, plot, grid, axis, savefig
 from math import sin
 import numpy
 import PIL
-
-#for future use
 import argparse
 
 class image_constructor:
@@ -68,6 +66,8 @@ class image_constructor:
         """
         Method which saves one image to disk
         """
+        if self.coord_list == None:
+            return "NO_COORD_LOADED"
         
         xlim(-10,10)
         ylim(-10,10)
@@ -98,6 +98,9 @@ class image_constructor:
         """
         Method which uses one image instance to process one image into pixel arrays
         """
+        if self.image_instance == None:
+            return "NO_IMAGE_LOADED"
+
         self.image_instance = self.image_instance.resize(size_tuple)
         image_array = numpy.array(self.image_instance, dtype= numpy.float)
         return image_array/255
@@ -121,4 +124,6 @@ class image_constructor:
         final_array = numpy.array(final_array)
         return final_array
 
-#Now we just need to build the parser around it
+parser = argparse.ArgumentParser()
+#add parser stuff
+parser.parse_args()
