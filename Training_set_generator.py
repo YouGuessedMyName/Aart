@@ -76,7 +76,7 @@ class ImageDataObj:
                 x = c[0]
                 y = c[1]
                 x.append(randvals.get_coord(u,(self.var_list[0])[n], (self.var_list[4])[n], (self.var_list[6])[n], (self.var_list[2])[n]))
-                y.append(randvals.get_coord(u, (self.var_list[1])[n], (self.var_list[3])[n], (self.var_list[7])[n], (self.var_list[3])[n]))
+                y.append(randvals.get_coord(u, (self.var_list[1])[n], (self.var_list[5])[n], (self.var_list[7])[n], (self.var_list[3])[n]))
                 n += 1
 
         # list of empty coords [[x, y], [x, y]......]
