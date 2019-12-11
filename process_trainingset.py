@@ -8,6 +8,7 @@ from pickle import load as pickle_load
 from matplotlib.pyplot import xlim, ylim, plot, grid, axis, savefig
 from math import sin
 from numpy import array, arange
+from numpy import float as numpy_float
 
 #for future use
 import PIL
@@ -21,6 +22,8 @@ class image_constructor:
     def __init__(self):
         self.datalist = None
         self.numlist = None
+        self.coord_list = None
+        self.image_instance = None
         
     def read_trainingset(self, name):
         """
@@ -60,18 +63,18 @@ class image_constructor:
                 n += 1
 
         coord_list.insert(0, u_arr)
-        return coord_list
+        self.coord_list = coord_list
         
-    def plot_and_save_img(self, coord_list, figurename):
+    def plot_and_save_img(self, figurename):
         """
         Method which saves one image to disk
         """
         
         xlim(-10,10)
         ylim(-10,10)
-        for n in range(len(coord_list)-1):
-            content = coord_list[n]
-            plot(content[0],content[1], linewidth = float(7/2))
+        for n in range(len(self.coord_list)-1):
+            content = self.coord_list[n]
+            plot(content[0],content[1], linewidth = float(10/2))
         grid(b = None)
         axis("off")
         savefig(figurename)
@@ -80,11 +83,31 @@ class image_constructor:
         """
         Method to read one image using PIL
         """
-        return "WIP"
+        if not os.path.isfile(imgname):
+            imgname = os.path.normpath(os.getcwd()+"/"+imgname)
+            if not os.path.isfile(imgname):
+                return "NO_FILE"
+
+        try:
+            image = PIL.Image.open(imgname)
+        except:
+            return "INVALID_FORMAT"
+        
+        self.image_instance = image
+
+    def process_image(self, size_tuple):
+        """
+        Method which uses one image instance to process one image into pixel arrays
+        """
+        self.image_instance = self.image_instance.resize(size_tuple)
+        #these two lines below do not work yet, i do not know why
+        image_array = array(self.image_instance, dtype= numpy_float)
+        return image_array/255
 
     def process_trainingset(self):
         """
         Method which processes one entire trainingset for use in training
         """
         return "WIP"
+
 
