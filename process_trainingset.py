@@ -7,11 +7,10 @@ import os
 from pickle import load as pickle_load
 from matplotlib.pyplot import xlim, ylim, plot, grid, axis, savefig
 from math import sin
-from numpy import array, arange
-from numpy import float as numpy_float
+import numpy
+import PIL
 
 #for future use
-import PIL
 import argparse
 
 class image_constructor:
@@ -51,7 +50,7 @@ class image_constructor:
         Method which reconstructs all coordinates from one picture
         """
         
-        u_arr = arange(0, 1, 0.01)
+        u_arr = numpy.arange(0, 1, 0.01)
         coord_list = [ [[], []] for i in range(10)]
         for u in u_arr:
             n = 0
@@ -100,14 +99,26 @@ class image_constructor:
         Method which uses one image instance to process one image into pixel arrays
         """
         self.image_instance = self.image_instance.resize(size_tuple)
-        #these two lines below do not work yet, i do not know why
-        image_array = array(self.image_instance, dtype= numpy_float)
+        image_array = numpy.array(self.image_instance, dtype= numpy.float)
         return image_array/255
 
     def process_trainingset(self):
         """
         Method which processes one entire trainingset for use in training
         """
-        return "WIP"
+        if self.datalist == None:
+            return "NO_SET_LOADED"
+        os.makedirs(os.path.normpath(os.getcwd()+"/temp_imgs"))
+        n = 0
+        final_array = []
+        for trainingset in self.datalist:
+            self.reconstruct_coords(trainingset)
+            self.plot_and_save_img("/temp_imgs/img"+str(n))
+            self.read_img("/temp_imgs/img"+str(n))
+            trainingset_array = self.process_image((128,128))
+            final_array.append(trainingset_array)
+            n+=1
+        final_array = numpy.array(final_array)
+        return final_array
 
-
+#Now we just need to build the parser around it
