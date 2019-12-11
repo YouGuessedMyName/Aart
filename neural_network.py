@@ -49,27 +49,6 @@ def get_trainingset():
             break
     return data[0], data[1], filename
 
-
-def process_trainingset(input_list):
-    """
-    Function to process one input_list to alter all values to a range (0 - 1).
-    """
-    for set_idx,single_set in enumerate(input_list):
-        for y in range(0,7):
-            varlist = single_set[y]
-            for idx,var in enumerate(varlist):
-                if y == 0 or y == 1:
-                    varlist[idx] = var/9
-                elif y == 2 or y == 3:
-                    varlist[idx] = (var+10)/20
-                elif y == 4 or y == 5:
-                    varlist[idx] = var/pi
-                elif y == 6 or y == 7:
-                    varlist[idx] = (var+pi)/2*pi
-            single_set[y] = varlist
-        input_list[set_idx] = single_set
-    return input_list
-
 def show_traningset(input_list, result_list, filename):
     """
     Function to clearly display trainingset data.
@@ -88,7 +67,6 @@ def show_traningset(input_list, result_list, filename):
 
 def main():
     input_list, result_list, filename = get_trainingset()
-    input_list = process_trainingset(input_list)
     show_traningset(input_list, result_list, filename)
 
 if __name__ == "__main__":
