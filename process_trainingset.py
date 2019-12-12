@@ -5,6 +5,7 @@ import os
 
 #for use in processing
 from pickle import load as pickle_load
+from pickle import dump as pickle_dump
 from matplotlib.pyplot import xlim, ylim, plot, grid, axis, savefig
 from math import sin
 import numpy
@@ -194,8 +195,24 @@ def main():
     print("Trainingset read succesfully")
 
   if args.process_one:
-    #Process one set of variables and save
-    input("WIP")
+
+    if args.verbosity:
+      print("Reconstructing coordinates of plot")
+    image_constructor.reconstruct_coords(image_constructor.datalist)
+    if args.verbosity:
+      print("Saving reconstructed plot to file")
+    image_constructor.plot_and_save_img("temp")
+    if args.verbosity:
+      print("Creating pixel array from image")
+    image_constructor.read_img("temp.png")
+    if args.verbosity:
+      print("Processing pixel array")
+    image_array = image_constructor.process_image(args.size_tuple)
+    final_array = [image_array,image_constructor.numlist]
+    if args.verbosity:
+      print("Saving processed data")
+    with open(os.path.normpath(os.getcwd()+"/"+args.output_name),"wb") as file:
+      pickle_dump(final_array,file)
     
   elif args.process_trainingset:
     #Process an entire set of variables and save
