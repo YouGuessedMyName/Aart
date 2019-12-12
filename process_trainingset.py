@@ -114,6 +114,8 @@ class ImageConstructor:
         if self.image_instance == None:
             return "NO_IMAGE_LOADED"
 
+        if self.image_instance.size[0] < size_tuple[0] or self.image_instance.size[1] < size_tuple[1]:
+          print("WARN: Image will be enlarged by processing, this is not intended for training purposes!")
         self.image_instance = self.image_instance.resize(size_tuple)
         image_array = numpy.array(self.image_instance, dtype= numpy.float)
         
@@ -191,8 +193,14 @@ def main():
   if args.verbosity:
     print("Trainingset read succesfully")
 
-  #Add the other stuff
-  #very insightfull much comment yes
+  if args.process_one:
+    #Process one set of variables and save
+    input("WIP")
+    
+  elif args.process_trainingset:
+    #Process an entire set of variables and save
+    input("WIP")
+
 
 if __name__ == "__main__":
   main()
