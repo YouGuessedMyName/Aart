@@ -10,6 +10,7 @@ from math import sin
 import numpy
 import PIL
 import argparse
+from shutil import rmtree
 
 class image_constructor:
     """
@@ -36,6 +37,7 @@ class image_constructor:
                 datalist,numlist = pickle_load(file)
         except:
             return "INVALID_FORMAT"
+        
         self.datalist = datalist
         self.numlist = numlist
 
@@ -71,13 +73,17 @@ class image_constructor:
         
         xlim(-10,10)
         ylim(-10,10)
+        grid(b = None)
+        axis("off")
+        
         for n in range(len(self.coord_list)-1):
             content = self.coord_list[n]
             plot(content[0],content[1], linewidth = float(10/2))
-        grid(b = None)
-        axis("off")
+            
         savefig(figurename)
-
+        
+        self.coord_list = None
+        
     def read_img(self, imgname):
         """
         Method to read one image using PIL
@@ -103,14 +109,22 @@ class image_constructor:
 
         self.image_instance = self.image_instance.resize(size_tuple)
         image_array = numpy.array(self.image_instance, dtype= numpy.float)
+        
+        self.image_instance = None
+        
         return image_array/255
 
     def process_trainingset(self):
         """
         Method which processes one entire trainingset for use in training
         """
-        if self.datalist == None:
+        if self.datalist == None and self.numlist == None:
+            return "NO_SET_LOADED\nNO_NUMLIST_LOADED"
+        elif self.datalist == None:
             return "NO_SET_LOADED"
+        elif self.numlist == None:
+            return "NO_NUMLIST_LOADED"
+        
         os.makedirs(os.path.normpath(os.getcwd()+"/temp_imgs"))
         n = 0
         final_array = []
@@ -122,6 +136,13 @@ class image_constructor:
             final_array.append(trainingset_array)
             n+=1
         final_array = numpy.array(final_array)
+        final_array = [final_array,self.numlist]
+        
+        shutil.rmtree(os.path.normpath(os.getcwd()+"/temp_imgs"), ignore_errors=True)
+        
+        self.numlist = None
+        self.datalist = None
+        
         return final_array
 
 parser = argparse.ArgumentParser()
