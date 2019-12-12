@@ -6,7 +6,7 @@ import os
 #for use in processing
 from pickle import load as pickle_load
 from pickle import dump as pickle_dump
-from matplotlib.pyplot import xlim, ylim, plot, grid, axis, savefig
+from matplotlib.pyplot import xlim, ylim, plot, grid, axis, savefig, clf
 from math import sin
 import numpy
 import PIL
@@ -86,6 +86,7 @@ class ImageConstructor:
             plot(content[0],content[1], linewidth = float(10/2))
             
         savefig(figurename)
+        clf()
         
         self.coord_list = None
         
@@ -94,6 +95,8 @@ class ImageConstructor:
         Method to read one image using PIL
         :param image_name: str
         """
+        if image_name[:4] != ".png":
+            image_name += ".png"
         if not os.path.isfile(image_name):
             image_name = os.path.normpath(os.getcwd()+"/"+image_name)
             if not os.path.isfile(image_name):
@@ -140,14 +143,13 @@ class ImageConstructor:
         final_array = []
         for trainingset in self.datalist:
             self.reconstruct_coords(trainingset)
-            self.plot_and_save_img("/temp_imgs/img"+str(n))
-            self.read_img("/temp_imgs/img"+str(n))
+            self.plot_and_save_img(os.path.normpath(os.getcwd()+"/temp_imgs/img"+str(n)))
+            test = self.read_img(os.path.normpath(os.getcwd()+"/temp_imgs/img"+str(n)))
             trainingset_array = self.process_image((128,128))
             final_array.append(trainingset_array)
             n+=1
         final_array = numpy.array(final_array)
         final_array = [final_array,self.numlist]
-        
         rmtree(os.path.normpath(os.getcwd()+"/temp_imgs"), ignore_errors=True)
         
         self.numlist = None
@@ -156,22 +158,27 @@ class ImageConstructor:
         return final_array
 
 def main():
+    
   # Setting argparser arguments
   parser = argparse.ArgumentParser()
-  parser.add_argument("-i","file_name", type=str, help="The name of the file you want to process.")
+  parser.add_argument("-i","--file_name", type=str, help="The name of the file you want to process.")
 
-  parser.add_argument("v","--verbosity", help="How much information the program will output about the process.", action="store_true")
+  parser.add_argument("-v","--verbosity", help="How much information the program will output about the process.", action="store_true")
 
-  parser.add_argument("-o","output_name", type=str, help="The name of the output file.")
+  parser.add_argument("-o","--output_name", type=str, help="The name of the output file.")
 
   parser.add_argument("-pt","--process_trainingset", help="Sets a flag to indicate one entire trainingset should be processed.", action="store_true")
 
   parser.add_argument("-po","--process_one",help="Sets a flag to indicate one set of variables should be processed.", action = "store_true")
 
   parser.add_argument("-is","--image_size",type = int, help="Sets the resizing tuple for the processing of images. Defaults to 64.")
-
+  
   # Getting the args
   args = parser.parse_args()
+  
+  if args.file_name == None:
+      print("ERROR: No file name was given!")
+      return
   
   #Defaulting variables:
   if args.output_name == None:
@@ -209,15 +216,23 @@ def main():
       print("Processing pixel array")
     image_array = image_constructor.process_image(args.size_tuple)
     final_array = [image_array,image_constructor.numlist]
-    if args.verbosity:
-      print("Saving processed data")
-    with open(os.path.normpath(os.getcwd()+"/"+args.output_name),"wb") as file:
-      pickle_dump(final_array,file)
     
   elif args.process_trainingset:
-    #Process an entire set of variables and save
-    input("WIP")
+    if args.verbosity:
+        print("Processing set")
+    final_array = image_constructor.process_trainingset()
 
+  else:
+      print("ERROR: No flag set for processing!")
+      return
+  
+  if args.verbosity:
+      print("Saving processed data")
+
+  with open(os.path.normpath(os.getcwd()+"/"+args.output_name+".trainingset"),"wb") as file:
+      pickle_dump(final_array,file)
+
+  print("Processing finished")
 
 if __name__ == "__main__":
   main()
