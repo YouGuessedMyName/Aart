@@ -162,7 +162,7 @@ class ImageConstructor:
 
 def main():
   # LOL this code is probably flawed but can't test it cause
-  # repl.it doesn't support command line running XD.
+  # command line running doesn't seem to be working.
 
   # Setting argparser arguments
   parser = argparse.ArgumentParser()
@@ -190,6 +190,8 @@ def main():
     sys.exit("ERROR in ImageConstructor.read_trainingset: " + error)
   if verbosity:
     print("Read trainingset succesfully")
+  
+  
 
 
 if __name__ == "__main__":
