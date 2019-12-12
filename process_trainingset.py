@@ -8,13 +8,15 @@ from pickle import load as pickle_load
 from matplotlib.pyplot import xlim, ylim, plot, grid, axis, savefig
 from math import sin
 import numpy
-import PIL
+import 
+Installig PIL in repl.it failed.
 import argparse
 from shutil import rmtree
 
-class image_constructor:
+
+class ImageConstructor:
     """
-    Class used to reconstruct images from their variables for processing
+    Class used to reconstruct images from their variables for processing.
     """
     
     def __init__(self):
@@ -26,6 +28,10 @@ class image_constructor:
     def read_trainingset(self, name):
         """
         Simple method which reads a trainingset in for processing
+
+        :param name: str
+
+        :return str "NO_FILE", "INVALID_FORMAT"
         """
         if not os.path.isfile(name):
             name = os.path.normpath(os.getcwd()+"/"+name)
@@ -42,12 +48,14 @@ class image_constructor:
         self.numlist = numlist
 
     def get_coord(self, u, var1, var2, var3, var4):
-        #Mainly used for readability
+        # Mainly used for readability
         return var1 * sin(var2 * u + var3) + var4 
 
-    def reconstruct_coords(self, variablelist):
+    def reconstruct_coords(self, variable_list):
         """
-        Method which reconstructs all coordinates from one picture
+        Method which reconstructs all coordinates from one picture.
+
+        :param variable_list: list
         """
         
         u_arr = numpy.arange(0, 1, 0.01)
@@ -57,8 +65,8 @@ class image_constructor:
             for c in coord_list:
                 x = c[0]
                 y = c[1]
-                x.append(self.get_coord(u,(variablelist[0])[n], (variablelist[4])[n], (variablelist[6])[n], (variablelist[2])[n]))
-                y.append(self.get_coord(u, (variablelist[1])[n], (variablelist[5])[n], (variablelist[7])[n], (variablelist[3])[n]))
+                x.append(self.get_coord(u,(variable_list[0])[n], (variable_list[4])[n], (variable_list[6])[n], (variable_list[2])[n]))
+                y.append(self.get_coord(u, (variable_list[1])[n], (variable_list[5])[n], (variable_list[7])[n], (variable_list[3])[n]))
                 n += 1
 
         coord_list.insert(0, u_arr)
@@ -84,17 +92,20 @@ class image_constructor:
         
         self.coord_list = None
         
-    def read_img(self, imgname):
+    def read_img(self, image_name):
         """
         Method to read one image using PIL
+
+        :param image_name: str
         """
-        if not os.path.isfile(imgname):
-            imgname = os.path.normpath(os.getcwd()+"/"+imgname)
-            if not os.path.isfile(imgname):
+        if not os.path.isfile(image_name):
+            image_name = os.path.normpath(os.getcwd()+"/"+image_name)
+            if not os.path.isfile(image_name):
                 return "NO_FILE"
 
         try:
-            image = PIL.Image.open(imgname)
+            image = PIL.Image.open(image_name)
+            pass
         except:
             return "INVALID_FORMAT"
         
@@ -102,7 +113,9 @@ class image_constructor:
 
     def process_image(self, size_tuple):
         """
-        Method which uses one image instance to process one image into pixel arrays
+        Method which uses one image instance to process one image into pixel arrays.
+
+        :param size_tuple: tuple (x, y)
         """
         if self.image_instance == None:
             return "NO_IMAGE_LOADED"
@@ -116,7 +129,7 @@ class image_constructor:
 
     def process_trainingset(self):
         """
-        Method which processes one entire trainingset for use in training
+        Method which processes one entire trainingset for use in training.
         """
         if self.datalist == None and self.numlist == None:
             return "NO_SET_LOADED\nNO_NUMLIST_LOADED"
@@ -138,13 +151,46 @@ class image_constructor:
         final_array = numpy.array(final_array)
         final_array = [final_array,self.numlist]
         
-        shutil.rmtree(os.path.normpath(os.getcwd()+"/temp_imgs"), ignore_errors=True)
+        rmtree(os.path.normpath(os.getcwd()+"/temp_imgs"), ignore_errors=True)
         
         self.numlist = None
         self.datalist = None
         
         return final_array
 
-parser = argparse.ArgumentParser()
-#add parser stuff
-parser.parse_args()
+def main():
+  # LOL this code is probably flawed but can't test it cause
+  # command line running doesn't seem to be working in repl.it.
+
+  # Setting argparser arguments
+  parser = argparse.ArgumentParser()
+  parser.add_argument("file_name", type=str, help="The name of the file you want to process.")
+  parser.add_argument("action", type=str, help="What you would like to do with the file.")
+  parser.add_argument("--verbosity", type=str, help="How much information the program will output about the process.")
+  # I don't think this argument is set properly.
+
+  # Getting the args
+  args, leftovers = parser.parse_args()
+
+  # Making vars for better readability, idk could be undone later.
+  file_name = args.file_name
+  action = args.action
+
+  verbosity = False
+  if args.verbosity == "--v" or "--verbosity":
+    verbosity = True
+
+  image_constructor = ImageConstructor()
+
+  # Reading trainingset
+  error = image_constructor.read_traningset
+  if error != None:
+    sys.exit("ERROR in ImageConstructor.read_trainingset: " + error)
+  if verbosity:
+    print("Read trainingset succesfully")
+  
+  
+
+
+if __name__ == "__main__":
+  main()
