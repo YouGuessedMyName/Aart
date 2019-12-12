@@ -161,7 +161,7 @@ def main():
 
   parser.add_argument("-o","output_name", type=str, help="The name of the output file.")
 
-  parser.add_argument("-pt","--proces_trainingset", help="Sets a flag to indicate one entire trainingset should be processed.", action="store_true")
+  parser.add_argument("-pt","--process_trainingset", help="Sets a flag to indicate one entire trainingset should be processed.", action="store_true")
 
   parser.add_argument("-po","--process_one",help="Sets a flag to indicate one set of variables should be processed.", action = "store_true")
 
@@ -175,6 +175,10 @@ def main():
     args.output_name = args.file_name
   if args.image_size == None or args.image_size < 1:
     args.image_size = 64
+
+  if args.process_one and args.process_trainingset:
+    print("WARN: -pt and -po cannot both be set, defaulting to -pt!")
+    args.process_one = False
   
   #Creating imageconstructor instance
   image_constructor = ImageConstructor()
@@ -187,6 +191,8 @@ def main():
   if args.verbosity:
     print("Trainingset read succesfully")
 
+  #Add the other stuff
+  #very insightfull much comment yes
 
 if __name__ == "__main__":
   main()
