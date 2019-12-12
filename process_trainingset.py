@@ -144,7 +144,7 @@ class ImageConstructor:
         for trainingset in self.datalist:
             self.reconstruct_coords(trainingset)
             self.plot_and_save_img(os.path.normpath(os.getcwd()+"/temp_imgs/img"+str(n)))
-            test = self.read_img(os.path.normpath(os.getcwd()+"/temp_imgs/img"+str(n)))
+            self.read_img(os.path.normpath(os.getcwd()+"/temp_imgs/img"+str(n)))
             trainingset_array = self.process_image((128,128))
             final_array.append(trainingset_array)
             n+=1
