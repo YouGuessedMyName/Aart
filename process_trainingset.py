@@ -8,8 +8,7 @@ from pickle import load as pickle_load
 from matplotlib.pyplot import xlim, ylim, plot, grid, axis, savefig
 from math import sin
 import numpy
-import 
-Installig PIL in repl.it failed.
+import PIL
 import argparse
 from shutil import rmtree
 
@@ -28,9 +27,7 @@ class ImageConstructor:
     def read_trainingset(self, name):
         """
         Simple method which reads a trainingset in for processing
-
         :param name: str
-
         :return str "NO_FILE", "INVALID_FORMAT"
         """
         if not os.path.isfile(name):
@@ -54,7 +51,6 @@ class ImageConstructor:
     def reconstruct_coords(self, variable_list):
         """
         Method which reconstructs all coordinates from one picture.
-
         :param variable_list: list
         """
         
@@ -95,7 +91,6 @@ class ImageConstructor:
     def read_img(self, image_name):
         """
         Method to read one image using PIL
-
         :param image_name: str
         """
         if not os.path.isfile(image_name):
@@ -114,7 +109,6 @@ class ImageConstructor:
     def process_image(self, size_tuple):
         """
         Method which uses one image instance to process one image into pixel arrays.
-
         :param size_tuple: tuple (x, y)
         """
         if self.image_instance == None:
@@ -159,37 +153,39 @@ class ImageConstructor:
         return final_array
 
 def main():
-  # LOL this code is probably flawed but can't test it cause
-  # command line running doesn't seem to be working in repl.it.
-
   # Setting argparser arguments
   parser = argparse.ArgumentParser()
-  parser.add_argument("file_name", type=str, help="The name of the file you want to process.")
-  parser.add_argument("action", type=str, help="What you would like to do with the file.")
-  parser.add_argument("--verbosity", type=str, help="How much information the program will output about the process.")
-  # I don't think this argument is set properly.
+  parser.add_argument("-i","file_name", type=str, help="The name of the file you want to process.")
+
+  parser.add_argument("v","--verbosity", help="How much information the program will output about the process.", action="store_true")
+
+  parser.add_argument("-o","output_name", type=str, help="The name of the output file.")
+
+  parser.add_argument("-pt","--proces_trainingset", help="Sets a flag to indicate one entire trainingset should be processed.", action="store_true")
+
+  parser.add_argument("-po","--process_one",help="Sets a flag to indicate one set of variables should be processed.", action = "store_true")
+
+  parser.add_argument("-is","--image_size",type = int, help="Sets the resizing tuple for the processing of images. Defaults to 64.")
 
   # Getting the args
-  args, leftovers = parser.parse_args()
-
-  # Making vars for better readability, idk could be undone later.
-  file_name = args.file_name
-  action = args.action
-
-  verbosity = False
-  if args.verbosity == "--v" or "--verbosity":
-    verbosity = True
-
+  args = parser.parse_args()
+  
+  #Defaulting variables:
+  if args.output_name == None:
+    args.output_name = args.file_name
+  if args.image_size == None or args.image_size < 1:
+    args.image_size = 64
+  
+  #Creating imageconstructor instance
   image_constructor = ImageConstructor()
 
-  # Reading trainingset
-  error = image_constructor.read_traningset
-  if error != None:
-    sys.exit("ERROR in ImageConstructor.read_trainingset: " + error)
-  if verbosity:
-    print("Read trainingset succesfully")
+  error = image_constructor.read_trainingset(args.file_name)
+  if type(error) == str:
+    print("ERROR:"+error)
+    return
   
-  
+  if args.verbosity:
+    print("Trainingset read succesfully")
 
 
 if __name__ == "__main__":
