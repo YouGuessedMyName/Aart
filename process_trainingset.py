@@ -22,8 +22,6 @@ class ImageConstructor:
     def __init__(self):
         self.datalist = None
         self.numlist = None
-        self.coord_list = None
-        self.image_instance = None
         
     def read_trainingset(self, name):
         """
@@ -75,8 +73,8 @@ class ImageConstructor:
 
     def process_dataset(self, dataset):
         
-        if type(dataset) == numpy.array:
-            print("WARN: Dataset is an array, attempting to convert to list for processing")
+        if type(dataset) != list:
+            print("WARN: Dataset is not a list, attempting to convert to list for processing")
             try:
                 dataset = list(dataset)
             except:
@@ -122,13 +120,103 @@ class ImageConstructor:
         return dataset
 
     def reverse_process_dataset(self, dataset):
-        return "WIP"
+
+        if type(dataset) != list:
+            print("WARN: Dataset is not a list, attempting to convert to list for processing")
+            try:
+                dataset = list(dataset)
+            except:
+                print("ERROR: Converting to list failed, exiting")
+                return "INVALID_FORMAT"
+
+
+        for idx, sublist in enumerate(dataset):
+            if type(sublist) != numpy.array:
+                print("WARN: Element of dataset is not an array, is this a genuine dataset?")
+                try:
+                    sublist = numpy.ndarray.tolist(sublist)
+                except:
+                    print("ERROR: Converting to list failed, exiting")
+                    return "INVALID_FORMAT"
+            else:
+                sublist = numpy.ndarray.tolist(sublist)
+            dataset[idx] = sublist
+
+        for idx,var in enumerate(dataset[0]):
+            dataset[0][idx] = self.reverse_process_randvar_1(var)
+            
+        for idx,var in enumerate(dataset[1]):
+            dataset[1][idx] = self.reverse_process_randvar_1(var)
+            
+        for idx,var in enumerate(dataset[2]):
+            dataset[2][idx] = self.reverse_process_randvar_2(var)
+            
+        for idx,var in enumerate(dataset[3]):
+            dataset[3][idx] = self.reverse_process_randvar_2(var)
+            
+        for idx,var in enumerate(dataset[4]):
+            dataset[4][idx] = self.reverse_process_randvar_3(var)
+            
+        for idx,var in enumerate(dataset[5]):
+            dataset[5][idx] = self.reverse_process_randvar_3(var)
+            
+        for idx,var in enumerate(dataset[6]):
+            dataset[6][idx] = self.reverse_process_randvar_4(var)
+            
+        for idx,var in enumerate(dataset[7]):
+            dataset[7][idx] = self.reverse_process_randvar_4(var)
+        
+        return dataset
 
     def process_trainingset(self):
-        return "WIP"
+
+        if self.datalist == None or self.numlist == None:
+            print("ERROR: No trainingset is loaded, exiting")
+            return "NO_SET"
+
+        if type(self.datalist) == numpy.array:
+            print("WARN: Trainingset is an array, attempting to convert to list for processing")
+            try:
+                self.datalist = list(self.datalist)
+            except:
+                print("ERROR: Converting to list failed, exiting")
+                return "INVALID_FORMAT"
+        
+        for idx,dataset in enumerate(self.datalist):
+            self.datalist[idx] = self.process_dataset(dataset)
+        
+        final_array = [numpy.array(self.datalist),numpy.array(self.numlist)]
+        
+        self.datalist = None
+        self.numlist = None
+        
+        return final_array
 
     def reverse_process_trainingset(self):
-        return "WIP"
+
+        if self.datalist == None or self.numlist:
+            print("ERROR: No trainingset is loaded, exiting")
+            return "NO_SET"
+
+        if type(self.datalist) != numpy.array:
+            print("WARN: Trainingset is not an array, is this a genuine trainingset?")
+            try:
+                self.datalist = list(self.datalist)
+            except:
+                print("Converting to list failed, exiting")
+                return "INVALID_FORMAT"
+        else:
+            self.datatlist = list(self.datalist)
+
+        for idx,dataset in enumerate(self.datalist):
+            self.datalist[idx] = self.reverse_process_dataset(dataset)
+
+        raw_set = [self.datalist,self.numlist]
+        
+        self.datalist = None
+        self.numlist = None
+        return raw_set
+
 def main():
     
   # Setting argparser arguments
