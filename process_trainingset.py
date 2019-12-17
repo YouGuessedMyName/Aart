@@ -7,7 +7,7 @@ import os
 from pickle import load as pickle_load
 from pickle import dump as pickle_dump
 from matplotlib.pyplot import xlim, ylim, plot, grid, axis, savefig, clf
-from math import sin
+from math import sin, pi
 import numpy
 import PIL
 import argparse
@@ -47,116 +47,88 @@ class ImageConstructor:
 
     def get_coord(self, u, var1, var2, var3, var4):
         # Mainly used for readability
-        return var1 * sin(var2 * u + var3) + var4 
+        return var1 * sin(var2 * u + var3) + var4
 
-    def reconstruct_coords(self, variable_list):
-        """
-        Method which reconstructs all coordinates from one picture.
-        :param variable_list: list
-        """
-        
-        u_arr = numpy.arange(0, 1, 0.01)
-        coord_list = [ [[], []] for i in range(10)]
-        for u in u_arr:
-            n = 0
-            for c in coord_list:
-                x = c[0]
-                y = c[1]
-                x.append(self.get_coord(u,(variable_list[0])[n], (variable_list[4])[n], (variable_list[6])[n], (variable_list[2])[n]))
-                y.append(self.get_coord(u, (variable_list[1])[n], (variable_list[5])[n], (variable_list[7])[n], (variable_list[3])[n]))
-                n += 1
+    def process_randvar_1(self, var):
+        return var/9
 
-        coord_list.insert(0, u_arr)
-        self.coord_list = coord_list
+    def process_randvar_2(self, var):
+        return (var+10)/20
+    
+    def process_randvar_3(self, var):
+        return var/(2*pi)
+    
+    def process_randvar_4(self, var):
+        return (var+pi)/(2*pi)
+
+    def reverse_process_randvar_1(self,var):
+        return var*9
+    
+    def reverse_process_randvar_2(self,var):
+        return (var*20)-10
+    
+    def reverse_process_randvar_3(self,var):
+        return var*(2*pi)
+    
+    def reverse_process_randvar_4(self,var):
+        return (var*(2*pi))-pi
+
+    def process_dataset(self, dataset):
         
-    def plot_and_save_img(self, figurename):
-        """
-        Method which saves one image to disk
-        """
-        if self.coord_list == None:
-            return "NO_COORD_LOADED"
-        
-        xlim(-10,10)
-        ylim(-10,10)
-        grid(b = None)
-        axis("off")
-        
-        for n in range(len(self.coord_list)-1):
-            content = self.coord_list[n]
-            plot(content[0],content[1], linewidth = float(10/2))
+        if type(dataset) == numpy.array:
+            print("WARN: Dataset is an array, attempting to convert to list for processing")
+            try:
+                dataset = list(dataset)
+            except:
+                print("ERROR: Converting to list failed, exiting")
+                return "INVALID_FORMAT"
             
-        savefig(figurename)
-        clf()
-        
-        self.coord_list = None
-        
-    def read_img(self, image_name):
-        """
-        Method to read one image using PIL
-        :param image_name: str
-        """
-        if image_name[:4] != ".png":
-            image_name += ".png"
-        if not os.path.isfile(image_name):
-            image_name = os.path.normpath(os.getcwd()+"/"+image_name)
-            if not os.path.isfile(image_name):
-                return "NO_FILE"
+        for idx,sublist in enumerate(dataset):
+            if type(sublist) == numpy.array:
+                print("WARN: Element of dataset is an array, attempting to convert to list for processing")
+                try:
+                    dataset[idx] = list(sublist)
+                except:
+                    print("ERROR: Converting to list failed, exiting")
+                    return "INVALID_FORMAT"
 
-        try:
-            image = PIL.Image.open(image_name)
-            pass
-        except:
-            return "INVALID_FORMAT"
-        
-        self.image_instance = image
+        for idx,var in enumerate(dataset[0]):
+            dataset[0][idx] = self.process_randvar_1(var)
+            
+        for idx,var in enumerate(dataset[1]):
+            dataset[1][idx] = self.process_randvar_1(var)
+            
+        for idx,var in enumerate(dataset[2]):
+            dataset[2][idx] = self.process_randvar_2(var)
+            
+        for idx,var in enumerate(dataset[3]):
+            dataset[3][idx] = self.process_randvar_2(var)
+            
+        for idx,var in enumerate(dataset[4]):
+            dataset[4][idx] = self.process_randvar_3(var)
+            
+        for idx,var in enumerate(dataset[5]):
+            dataset[5][idx] = self.process_randvar_3(var)
+            
+        for idx,var in enumerate(dataset[6]):
+            dataset[6][idx] = self.process_randvar_4(var)
 
-    def process_image(self, size_tuple):
-        """
-        Method which uses one image instance to process one image into pixel arrays.
-        :param size_tuple: tuple (x, y)
-        """
-        if self.image_instance == None:
-            return "NO_IMAGE_LOADED"
+        for idx,var in enumerate(dataset[7]):
+            dataset[7][idx] = self.process_randvar_4(var)
+        
+        for idx,sublist in enumerate(dataset):
+            dataset[idx] = numpy.array(sublist)
+        
+        return dataset
 
-        if self.image_instance.size[0] < size_tuple[0] or self.image_instance.size[1] < size_tuple[1]:
-          print("WARN: Image will be enlarged by processing, this is not intended for training purposes!")
-        self.image_instance = self.image_instance.resize(size_tuple)
-        image_array = numpy.array(self.image_instance, dtype= numpy.float)
-        
-        self.image_instance = None
-        
-        return image_array/255
+    def reverse_process_dataset(self, dataset):
+        return "WIP"
 
     def process_trainingset(self):
-        """
-        Method which processes one entire trainingset for use in training.
-        """
-        if self.datalist == None and self.numlist == None:
-            return "NO_SET_LOADED\nNO_NUMLIST_LOADED"
-        elif self.datalist == None:
-            return "NO_SET_LOADED"
-        elif self.numlist == None:
-            return "NO_NUMLIST_LOADED"
-        
-        os.makedirs(os.path.normpath(os.getcwd()+"/temp_imgs"))
-        n = 0
-        final_array = []
-        for trainingset in self.datalist:
-            self.reconstruct_coords(trainingset)
-            self.plot_and_save_img(os.path.normpath(os.getcwd()+"/temp_imgs/img"+str(n)))
-            self.read_img(os.path.normpath(os.getcwd()+"/temp_imgs/img"+str(n)))
-            trainingset_array = self.process_image((128,128))
-            final_array.append(trainingset_array)
-            n+=1
-        final_array = numpy.array(final_array)
-        final_array = [final_array,self.numlist]
-        rmtree(os.path.normpath(os.getcwd()+"/temp_imgs"), ignore_errors=True)
-        
-        self.numlist = None
-        self.datalist = None
-        
-        return final_array
+        return "WIP"
 
+    def reverse_process_trainingset(self):
+        return "WIP"
 def main():
     
   # Setting argparser arguments
@@ -171,7 +143,7 @@ def main():
 
   parser.add_argument("-po","--process_one",help="Sets a flag to indicate one set of variables should be processed.", action = "store_true")
 
-  parser.add_argument("-is","--image_size",type = int, help="Sets the resizing tuple for the processing of images. Defaults to 64.")
+  parser.add_argument("-rp","--reverse_process",help="Sets a flag to indicate a trainigset should be processed to obtain the original variables.", action = "store_true")
   
   # Getting the args
   args = parser.parse_args()
@@ -183,8 +155,6 @@ def main():
   #Defaulting variables:
   if args.output_name == None:
     args.output_name = args.file_name
-  if args.image_size == None or args.image_size < 1:
-    args.image_size = 64
 
   if args.process_one and args.process_trainingset:
     print("WARN: -pt and -po cannot both be set, defaulting to -pt!")
@@ -201,38 +171,7 @@ def main():
   if args.verbosity:
     print("Trainingset read succesfully")
 
-  if args.process_one:
-
-    if args.verbosity:
-      print("Reconstructing coordinates of plot")
-    image_constructor.reconstruct_coords(image_constructor.datalist)
-    if args.verbosity:
-      print("Saving reconstructed plot to file")
-    image_constructor.plot_and_save_img("temp")
-    if args.verbosity:
-      print("Creating pixel array from image")
-    image_constructor.read_img("temp.png")
-    if args.verbosity:
-      print("Processing pixel array")
-    image_array = image_constructor.process_image(args.size_tuple)
-    final_array = [image_array,image_constructor.numlist]
-    
-  elif args.process_trainingset:
-    if args.verbosity:
-        print("Processing set")
-    final_array = image_constructor.process_trainingset()
-
-  else:
-      print("ERROR: No flag set for processing!")
-      return
-  
-  if args.verbosity:
-      print("Saving processed data")
-
-  with open(os.path.normpath(os.getcwd()+"/"+args.output_name+".trainingset"),"wb") as file:
-      pickle_dump(final_array,file)
-
-  print("Processing finished")
+  input("WIP")
 
 if __name__ == "__main__":
   main()
