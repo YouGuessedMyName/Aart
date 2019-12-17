@@ -5,5 +5,3 @@ Authors: Ivo Melse, Alex Feenstra
 
 Acknowledgements:
 Judith van Es, Michiel van Duin
-
-ivo help wat is de temp file?
