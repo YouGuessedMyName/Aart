@@ -6,4 +6,4 @@ Authors: Ivo Melse, Alex Feenstra
 Acknowledgements:
 Judith van Es, Michiel van Duin
 
-Processing works, reverse processing does not yet.
+Everything works in principle, just have to check wether array conversions are done properly as some warnings are given
