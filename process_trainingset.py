@@ -131,12 +131,12 @@ class ProcessingObj:
             if type(sublist) != numpy.array:
                 print("WARN: Element of dataset is not an array, is this a genuine dataset?")
                 try:
-                    sublist = numpy.ndarray.tolist(sublist)
+                    sublist = list(sublist)
                 except:
                     print("ERROR: Converting to list failed, exiting")
                     return "INVALID_FORMAT"
             else:
-                sublist = numpy.ndarray.tolist(sublist)
+                sublist = list(sublist)
             dataset[idx] = sublist
 
         for idx,var in enumerate(dataset[0]):
