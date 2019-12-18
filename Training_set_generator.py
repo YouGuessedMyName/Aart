@@ -4,7 +4,7 @@ from random import randrange, uniform, randint
 import secrets
 from math import pi, sin
 from matplotlib.pyplot import plot, xlim, ylim, show, grid, axis
-from numpy import array, arange
+from numpy import arange
 import pickle
 
 # Function to clear screen with and print title with
@@ -54,11 +54,6 @@ class ImageDataObj:
             self.var_list[6].append(randvals.randvar_4())
             self.var_list[7].append(randvals.randvar_4())
 
-        # converting each item in var_list to array
-        var_list_of_arrays = []
-        for var in self.var_list:
-            var_list_of_arrays.append(array(var))
-        self.var_list = var_list_of_arrays
 
     # Function which is called by plot in order to generate all coordinates
     def gen_coordinates(self):
