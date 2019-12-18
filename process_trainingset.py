@@ -241,9 +241,6 @@ def main():
     if args.output_name == None:
         args.output_name = args.file_name
 
-    if os.path.isfile(args.output_name) == True or os.path.isfile(os.path.normpath(os.getcwd()+"/"+args.output_name)) == True:
-        print("WARN: Output file name is already in use, file will be overwritten!")
-
     if args.process_one and args.process_trainingset:
         print("WARN: -pt and -po cannot both be set, defaulting to -pt!")
         args.process_one = False
@@ -278,6 +275,9 @@ def main():
         else:
             processed_set = variable_processor.process_trainingset()
 
+    if args.verbosity:
+        print("Saving processed data")
+
     if args.reverse_process:
         suffix = ""
         if args.output_name[:-12] == ".trainingset":
@@ -285,10 +285,12 @@ def main():
     else:
         suffix = ".trainingset"
 
-    if args.verbosity:
-        print("Saving processed data")
+    filename = os.path.normpath(os.getcwd()+"/"+args.output_name+suffix)
 
-    with open(os.path.normpath(os.getcwd()+"/"+args.output_name+suffix), "wb") as file:
+    if os.path.isfile(filename):
+        print("WARN: Output file name is already in use, file will be overwritten!")
+
+    with open(filename, "wb") as file:
         pickle_dump(processed_set,file)
 
     if args.verbosity:
