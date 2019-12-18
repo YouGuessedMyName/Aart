@@ -191,7 +191,7 @@ class ProcessingObj:
 
     def reverse_process_trainingset(self):
 
-        if self.datalist == None or self.numlist:
+        if type(self.datalist) == None or type(self.numlist) == None:
             print("ERROR: No trainingset is loaded, exiting")
             return "NO_SET"
 
@@ -288,8 +288,8 @@ def main():
     if args.verbosity:
         print("Saving processed data")
 
-    with open(os.path.normpath(os.getcwd()+"/"+args.output_name+suffix), "rb") as file:
-        pickle.dump(processed_est,file)
+    with open(os.path.normpath(os.getcwd()+"/"+args.output_name+suffix), "wb") as file:
+        pickle_dump(processed_set,file)
 
     if args.verbosity:
         print("Processing finished")
