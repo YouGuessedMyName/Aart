@@ -6,15 +6,12 @@ import os
 #for use in processing
 from pickle import load as pickle_load
 from pickle import dump as pickle_dump
-from matplotlib.pyplot import xlim, ylim, plot, grid, axis, savefig, clf
 from math import sin, pi
 import numpy
-import PIL
 import argparse
-from shutil import rmtree
 
 
-class ImageConstructor:
+class ProcessingObj:
     """
     Class used to reconstruct images from their variables for processing.
     """
@@ -218,48 +215,84 @@ class ImageConstructor:
         return raw_set
 
 def main():
+
+    # Setting argparser arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i","--file_name", type=str, help="The name of the file you want to process.")
+
+    parser.add_argument("-v","--verbosity", help="How much information the program will output about the process.", action="store_true")
+
+    parser.add_argument("-o","--output_name", type=str, help="The name of the output file.")
+
+    parser.add_argument("-pt","--process_trainingset", help="Sets a flag to indicate one entire trainingset should be processed.", action="store_true")
+
+    parser.add_argument("-po","--process_one",help="Sets a flag to indicate one set of variables should be processed.", action = "store_true")
+
+    parser.add_argument("-rp","--reverse_process",help="Sets a flag to indicate a trainigset should be processed to obtain the original variables.", action = "store_true")
+
+    # Getting the args
+    args = parser.parse_args()
+
+    if args.file_name == None:
+        print("ERROR: No file name was given!")
+        return
+
+    #Defaulting variables:
+    if args.output_name == None:
+        args.output_name = args.file_name
+
+    if os.path.isfile(args.output_name) == True or os.path.isfile(os.path.normpath(os.getcwd()+"/"+args.output_name)) == True:
+        print("WARN: Output file name is already in use, file will be overwritten!")
+
+    if args.process_one and args.process_trainingset:
+        print("WARN: -pt and -po cannot both be set, defaulting to -pt!")
+        args.process_one = False
+
+    #Creating ProcessingObj instance
+    variable_processor = ProcessingObj()
+
+    error = variable_processor.read_trainingset(args.file_name)
+    if type(error) == str:
+        print("ERROR:"+error)
+        return
+
+    if args.verbosity:
+        print("Trainingset read succesfully")
+
     
-  # Setting argparser arguments
-  parser = argparse.ArgumentParser()
-  parser.add_argument("-i","--file_name", type=str, help="The name of the file you want to process.")
+    if args.process_one:
+        if args.verbosity:
+            print("Processing dataset")
+            
+        if args.reverse_process:
+            processed_set = variable_processor.reverse_process_dataset()
+        else:
+            processed_set = variable_processor.process_dataset()
 
-  parser.add_argument("-v","--verbosity", help="How much information the program will output about the process.", action="store_true")
+    elif args.process_trainingset:
+        if args.verbosity:
+            print("Processing trainingset")
+        
+        if args.reverse_process:
+            processed_set = variable_processor.reverse_process_trainingset()
+        else:
+            processed_set = variable_processor.process_trainingset()
 
-  parser.add_argument("-o","--output_name", type=str, help="The name of the output file.")
+    if args.reverse_process:
+        suffix = ""
+        if args.output_name[:-12] == ".trainingset":
+            args.ouput_name = args.output_name[::-12]
+    else:
+        suffix = ".trainingset"
 
-  parser.add_argument("-pt","--process_trainingset", help="Sets a flag to indicate one entire trainingset should be processed.", action="store_true")
+    if args.verbosity:
+        print("Saving processed data")
 
-  parser.add_argument("-po","--process_one",help="Sets a flag to indicate one set of variables should be processed.", action = "store_true")
+    with open(os.path.normpath(os.getcwd()+"/"+args.output_name+suffix), "rb") as file:
+        pickle.dump(processed_est,file)
 
-  parser.add_argument("-rp","--reverse_process",help="Sets a flag to indicate a trainigset should be processed to obtain the original variables.", action = "store_true")
-  
-  # Getting the args
-  args = parser.parse_args()
-  
-  if args.file_name == None:
-      print("ERROR: No file name was given!")
-      return
-  
-  #Defaulting variables:
-  if args.output_name == None:
-    args.output_name = args.file_name
-
-  if args.process_one and args.process_trainingset:
-    print("WARN: -pt and -po cannot both be set, defaulting to -pt!")
-    args.process_one = False
-  
-  #Creating imageconstructor instance
-  image_constructor = ImageConstructor()
-
-  error = image_constructor.read_trainingset(args.file_name)
-  if type(error) == str:
-    print("ERROR:"+error)
-    return
-  
-  if args.verbosity:
-    print("Trainingset read succesfully")
-
-  input("WIP")
+    if args.verbosity:
+        print("Processing finished")
 
 if __name__ == "__main__":
   main()
