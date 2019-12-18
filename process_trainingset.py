@@ -112,7 +112,7 @@ class ProcessingObj:
             dataset[7][idx] = self.process_randvar_4(var)
         
         for idx,sublist in enumerate(dataset):
-            dataset[idx] = numpy.array(sublist)
+            dataset[idx] = numpy.array(sublist, dtype =numpy.float64)
         
         return dataset
 
@@ -182,7 +182,7 @@ class ProcessingObj:
         for idx,dataset in enumerate(self.datalist):
             self.datalist[idx] = self.process_dataset(dataset)
         
-        final_array = [numpy.array(self.datalist),numpy.array(self.numlist)]
+        final_array = [numpy.array(self.datalist,dtype=numpy.float64),numpy.array(self.numlist,dtype =numpy.float64)]
         
         self.datalist = None
         self.numlist = None
