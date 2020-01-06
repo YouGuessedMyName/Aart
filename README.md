@@ -1,4 +1,4 @@
-# Tensorflow-Art
+# AART
 TINKERLAB
 
 Authors: Ivo Melse, Alex Feenstra
